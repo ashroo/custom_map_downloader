@@ -11,6 +11,7 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 ## Screenshot
 
 ![Plugin Interface](menu-screenshot.png)
+
 *Custom Map Downloader plugin interface*
 
 ## Features
@@ -28,12 +29,14 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 ## Installation
 
 ### From QGIS Plugin Repository (Recommended)
+
 1. Open QGIS
 2. Go to `Plugins` → `Manage and Install Plugins`
 3. Search for "Custom Map Downloader"
 4. Click `Install Plugin`
 
 ### Manual Installation
+
 1. Download the latest release from [GitHub Releases](https://github.com/ashroo/custom_map_downloader/releases)
 2. Extract the ZIP file
 3. Copy the `custommapdownloader` folder to your QGIS plugins directory:
@@ -48,51 +51,53 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 ### Quick Start
 
 1. **Load a Map Layer**
+
    - Add any map layer to QGIS (e.g., Google Satellite, OpenStreetMap, Bing Maps)
    - Ensure the layer is visible in the Layers panel
-
 2. **Open the Plugin**
+
    - Click the Custom Map Downloader icon in the toolbar, or
    - Go to `Plugins` → `MapDownloader` → `Download GeoTIFF from Map`
-
 3. **Configure Parameters**
+
    - **Coordinates**: Enter latitude and longitude in decimal degrees
      - Example: Latitude: `28.6139`, Longitude: `77.2090` (New Delhi)
    - **Resolution**: Set Ground Sampling Distance (GSD) in meters/pixel
      - Default: `5.0` m/pixel
    - **Dimensions**: Specify output width and height in pixels
      - Default: `5000 × 5000` pixels
-
 4. **Select Layer**
+
    - Choose the layer to export from the dropdown menu
    - The list automatically refreshes to show all loaded layers
-
 5. **Choose Output Path**
+
    - Click `Browse...` to select where to save the file
    - Recommended format: `.tif` or `.tiff`
-
 6. **Configure Export Options**
+
    - ☑️ **Add georeferencing metadata**: Creates proper GeoTIFF with spatial reference (recommended)
    - ☑️ **Load exported image as layer in QGIS**: Automatically adds result to your project
-
 7. **Export**
+
    - Click `OK` to start the export
    - A progress dialog will show during rendering
    - Success message will confirm completion
 
 ### Default Settings
 
-| Parameter | Default Value |
-|-----------|---------------|
-| GSD | 5.0 meters/pixel |
-| Width | 5000 pixels |
-| Height | 5000 pixels |
-| Georeferencing | Enabled |
-| Load as Layer | Enabled |
+| Parameter      | Default Value    |
+| -------------- | ---------------- |
+| GSD            | 5.0 meters/pixel |
+| Width          | 5000 pixels      |
+| Height         | 5000 pixels      |
+| Georeferencing | Enabled          |
+| Load as Layer  | Enabled          |
 
 ## Output Formats
 
 ### With Georeferencing (GeoTIFF)
+
 - **Format**: GeoTIFF with full GDAL metadata
 - **Projection**: EPSG:3857 (Web Mercator)
 - **Geotransform**: Includes pixel size and geographic extent
@@ -101,6 +106,7 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 - **Compatibility**: Works with all GIS software (QGIS, ArcGIS, GDAL, etc.)
 
 ### Without Georeferencing (TIFF)
+
 - **Format**: Standard TIFF image
 - **No spatial metadata**
 - **Smaller file size**
@@ -119,16 +125,19 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 ## Technical Details
 
 ### Coordinate Systems
+
 - **Input**: EPSG:4326 (WGS84 - Latitude/Longitude)
 - **Processing**: EPSG:3857 (Web Mercator)
 - **Output**: EPSG:3857 with proper geotransform
 
 ### Rendering
+
 - Uses `QgsMapRendererParallelJob` for efficient parallel rendering
 - Supports all QGIS-compatible layer types
 - Renders at exact specified resolution
 
 ### Georeferencing
+
 - GDAL-based georeferencing with proper geotransform matrix
 - Includes spatial reference system (SRS) metadata
 - Pixel size calculated from GSD parameter
@@ -138,7 +147,7 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 
 - **QGIS**: Version 3.0 or higher
 - **Python**: 3.6+ (included with QGIS)
-- **Dependencies**: 
+- **Dependencies**:
   - `numpy` (included with QGIS)
   - `GDAL/OGR` (included with QGIS)
   - `PyQt5` (included with QGIS)
@@ -146,18 +155,23 @@ Perfect for extracting satellite imagery, creating training datasets, generating
 ## Troubleshooting
 
 ### Layer not appearing in dropdown
+
 - **Solution**: The plugin refreshes layers each time it opens. If a layer is missing, close and reopen the dialog.
 
 ### Export fails with "Invalid coordinates"
+
 - **Solution**: Ensure latitude is between -90 and 90, longitude between -180 and 180. Use decimal degrees format.
 
 ### Exported image has no georeferencing
+
 - **Solution**: Make sure "Add georeferencing metadata" checkbox is enabled before export.
 
 ### Image appears in wrong location
+
 - **Solution**: Verify your input coordinates are correct and in decimal degrees (not DMS format).
 
 ### Large exports are slow
+
 - **Solution**: This is normal for high-resolution exports. The progress dialog shows the process is working. Consider reducing dimensions or GSD for faster exports.
 
 ## Contributing
@@ -179,6 +193,7 @@ See [LICENSE](LICENSE) for more details.
 ## Author
 
 **Abhinav Jayswal**
+
 - Email: abhinavjayaswal10@gmail.com
 - GitHub: [@ashroo](https://github.com/ashroo)
 
@@ -197,6 +212,7 @@ See [LICENSE](LICENSE) for more details.
 ## Changelog
 
 ### Version 0.1 (Initial Release)
+
 - Export georeferenced GeoTIFF from any QGIS layer
 - Configurable GSD and dimensions
 - Optional georeferencing toggle
