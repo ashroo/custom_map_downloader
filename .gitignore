@@ -31,3 +31,7 @@ Thumbs.db
 *.md
 !README.md
 
+# Packaging scripts (local use only)
+package_plugin.py
+package_plugin.ps1
+

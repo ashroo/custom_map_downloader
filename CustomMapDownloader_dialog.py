@@ -28,7 +28,7 @@ from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 from qgis.core import QgsProject
 
-# This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
+# This loads the .ui file so that PyQt can populate the plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'CustomMapDownloader_dialog_base.ui'))
 
