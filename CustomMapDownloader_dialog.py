@@ -26,7 +26,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem
 
 # This loads the .ui file so that PyQt can populate the plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -46,6 +46,9 @@ class CustomMapDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
         
         # Connect the browse button to file dialog
         self.pushButton_browse.clicked.connect(self.select_output_file)
+        
+        # Populate CRS combo box
+        self.populate_crs()
     
     def populate_layers(self):
         """Populate the layer combo box with all layers from the current project."""
@@ -53,6 +56,56 @@ class CustomMapDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             self.comboBox_layer.addItem(layer.name(), layer)
+    
+    def populate_crs(self):
+        """Populate the CRS combo box with common coordinate reference systems."""
+        self.comboBox_crs.clear()
+        
+        # Define common CRS options with their EPSG codes and descriptions
+        crs_options = [
+            ("EPSG:3857", "WGS 84 / Pseudo-Mercator (Web Mercator)"),
+            ("EPSG:4326", "WGS 84 (Geographic, lat/lon)"),
+            ("EPSG:3395", "WGS 84 / World Mercator"),
+            ("EPSG:32633", "WGS 84 / UTM zone 33N"),
+            ("EPSG:32634", "WGS 84 / UTM zone 34N"),
+            ("EPSG:32635", "WGS 84 / UTM zone 35N"),
+            ("EPSG:32636", "WGS 84 / UTM zone 36N"),
+            ("EPSG:32637", "WGS 84 / UTM zone 37N"),
+            ("EPSG:32638", "WGS 84 / UTM zone 38N"),
+            ("EPSG:32639", "WGS 84 / UTM zone 39N"),
+            ("EPSG:32640", "WGS 84 / UTM zone 40N"),
+            ("EPSG:32641", "WGS 84 / UTM zone 41N"),
+            ("EPSG:32642", "WGS 84 / UTM zone 42N"),
+            ("EPSG:32643", "WGS 84 / UTM zone 43N"),
+            ("EPSG:32644", "WGS 84 / UTM zone 44N"),
+            ("EPSG:32645", "WGS 84 / UTM zone 45N"),
+            ("EPSG:32646", "WGS 84 / UTM zone 46N"),
+            ("EPSG:32733", "WGS 84 / UTM zone 33S"),
+            ("EPSG:32734", "WGS 84 / UTM zone 34S"),
+            ("EPSG:32735", "WGS 84 / UTM zone 35S"),
+            ("EPSG:32736", "WGS 84 / UTM zone 36S"),
+            ("EPSG:2154", "RGF93 / Lambert-93 (France)"),
+            ("EPSG:27700", "OSGB 1936 / British National Grid"),
+            ("EPSG:5514", "S-JTSK / Krovak East North"),
+            ("EPSG:31370", "Belge 1972 / Belgian Lambert 72"),
+            ("EPSG:25832", "ETRS89 / UTM zone 32N"),
+            ("EPSG:25833", "ETRS89 / UTM zone 33N"),
+            ("EPSG:2056", "CH1903+ / LV95 (Switzerland)"),
+            ("EPSG:3035", "ETRS89 / LAEA Europe"),
+            ("EPSG:3857", "WGS 84 / Pseudo-Mercator"),
+        ]
+        
+        # Add CRS options to combo box
+        for epsg_code, description in crs_options:
+            crs = QgsCoordinateReferenceSystem(epsg_code)
+            if crs.isValid():
+                display_text = f"{epsg_code} - {description}"
+                self.comboBox_crs.addItem(display_text, epsg_code)
+        
+        # Set default to EPSG:3857 (Web Mercator)
+        default_index = self.comboBox_crs.findData("EPSG:3857")
+        if default_index >= 0:
+            self.comboBox_crs.setCurrentIndex(default_index)
     
     def select_output_file(self):
         """Open a file dialog to select the output file path."""
@@ -78,6 +131,9 @@ class CustomMapDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
             load_as_layer = self.checkBox_loadLayer.isChecked()
             add_georeferencing = self.checkBox_georeferencing.isChecked()
             
+            # Get selected CRS
+            crs_epsg = self.comboBox_crs.currentData()
+            
             return {
                 'lat': lat,
                 'lon': lon,
@@ -87,7 +143,8 @@ class CustomMapDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
                 'layer': layer,
                 'output_path': output_path,
                 'load_as_layer': load_as_layer,
-                'add_georeferencing': add_georeferencing
+                'add_georeferencing': add_georeferencing,
+                'output_crs': crs_epsg
             }
         except ValueError as e:
             return None

@@ -6,7 +6,7 @@
 name=MapDownloader
 qgisMinimumVersion=3.0
 description=Download georeferenced maps from any layer
-version=0.1.1
+version=0.1.2
 author=Abhinav Jayswal
 email=abhinavjayaswal10@gmail.com
 
@@ -19,8 +19,9 @@ repository=https://github.com/ashroo/custom_map_downloader
 # Recommended items:
 
 hasProcessingProvider=no
-# Uncomment the following line and add the changelog:
-# changelog=
+changelog=
+    0.1.2 - Added CRS selection with 30+ EPSG codes; Fixed extent calculation for geographic vs projected CRS
+    0.1.1 - Initial release with georeferencing support
 
 # Tags are comma separated with spaces allowed
 tags=raster,export,geotiff,satellite,imagery,download,georeferencing,map

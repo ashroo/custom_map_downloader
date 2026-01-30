@@ -292,21 +292,41 @@ class CustomMapDownloader:
         layer = params['layer']
         output_path = params['output_path']
         add_georeferencing = params['add_georeferencing']
+        output_crs_epsg = params.get('output_crs', 'EPSG:3857')
         
-        # 1. Coordinate transformation to EPSG:3857 (Web Mercator)
+        # 1. Coordinate transformation to selected output CRS
         crs_src = QgsCoordinateReferenceSystem("EPSG:4326")
-        crs_dest = QgsCoordinateReferenceSystem("EPSG:3857")
+        crs_dest = QgsCoordinateReferenceSystem(output_crs_epsg)
         transformer = QgsCoordinateTransform(crs_src, crs_dest, QgsProject.instance())
-        center_3857 = transformer.transform(QgsPointXY(lon, lat))
+        center_transformed = transformer.transform(QgsPointXY(lon, lat))
         
-        # 2. Calculate output extent in meters
-        half_width = (width * gsd) / 2
-        half_height = (height * gsd) / 2
+        # 2. Calculate output extent in the selected CRS units
+        # For geographic CRS (degrees), we need to convert GSD from meters to degrees
+        # For projected CRS (meters), we use GSD directly
+        if crs_dest.isGeographic():
+            # Convert GSD from meters to degrees (approximate at the given latitude)
+            # 1 degree latitude ≈ 111,320 meters
+            # 1 degree longitude ≈ 111,320 * cos(latitude) meters
+            meters_per_degree_lat = 111320.0
+            meters_per_degree_lon = 111320.0 * np.cos(np.radians(lat))
+            
+            gsd_x = gsd / meters_per_degree_lon  # degrees per pixel in x direction
+            gsd_y = gsd / meters_per_degree_lat  # degrees per pixel in y direction
+            
+            half_width = (width * gsd_x) / 2
+            half_height = (height * gsd_y) / 2
+        else:
+            # Projected CRS - use GSD in meters directly
+            half_width = (width * gsd) / 2
+            half_height = (height * gsd) / 2
+            gsd_x = gsd
+            gsd_y = gsd
+        
         extent = QgsRectangle(
-            center_3857.x() - half_width,
-            center_3857.y() - half_height,
-            center_3857.x() + half_width,
-            center_3857.y() + half_height
+            center_transformed.x() - half_width,
+            center_transformed.y() - half_height,
+            center_transformed.x() + half_width,
+            center_transformed.y() + half_height
         )
         
         # 3. Set up map settings for exporting
@@ -349,19 +369,24 @@ class CustomMapDownloader:
         
         # 8. Set geotransform (defines pixel size and upper-left corner)
         # GeoTransform: [top_left_x, pixel_width, 0, top_left_y, 0, -pixel_height]
+        # Calculate actual pixel sizes from extent
+        pixel_size_x = (extent.xMaximum() - extent.xMinimum()) / width
+        pixel_size_y = (extent.yMaximum() - extent.yMinimum()) / height
+        
         geotransform = [
             extent.xMinimum(),  # top-left x
-            gsd,                # pixel width (west-east)
+            pixel_size_x,       # pixel width (west-east)
             0,                  # rotation (0 for north-up)
             extent.yMaximum(),  # top-left y
             0,                  # rotation (0 for north-up)
-            -gsd                # pixel height (north-south, negative because y decreases)
+            -pixel_size_y       # pixel height (north-south, negative because y decreases)
         ]
         dataset.SetGeoTransform(geotransform)
         
-        # 9. Set projection (EPSG:3857 - Web Mercator)
+        # 9. Set projection to the selected output CRS
         srs = osr.SpatialReference()
-        srs.ImportFromEPSG(3857)
+        epsg_code = int(output_crs_epsg.split(':')[1])
+        srs.ImportFromEPSG(epsg_code)
         dataset.SetProjection(srs.ExportToWkt())
         
         # 10. Write the image data (RGBA bands)
