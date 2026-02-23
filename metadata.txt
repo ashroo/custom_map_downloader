@@ -5,12 +5,12 @@
 [general]
 name=MapDownloader
 qgisMinimumVersion=3.0
-description=Download georeferenced maps from any layer
-version=0.1.2
+description=Download georeferenced maps from any layer as GeoTIFF or MBTiles; supports bbox/center extents, zoom range or single-shot, neighbour padding, live estimates, and determinate progress
+version=0.2.0
 author=Abhinav Jayswal
 email=abhinavjayaswal10@gmail.com
 
-about=Custom Map Downloader is a QGIS plugin that allows users to generate high-resolution, georeferenced GeoTIFF images from any loaded map layer. By providing a single latitude–longitude point, desired GSD (ground sampling distance), and output dimensions, the plugin automatically computes the correct map extent, renders the specified layer at the requested resolution, and exports a fully geotagged TIFF file. It supports satellite imagery, XYZ tiles, raster layers, and vector tile layers, making it ideal for simulation, training data generation, offline map extraction, and custom analysis workflows. Features include optional georeferencing toggle, automatic layer loading, progress feedback, and GDAL-based geospatial metadata.
+about=Custom Map Downloader is a QGIS plugin that enables high-resolution map export from any loaded layer. Export formats: GeoTIFF (single raster image with full georeferencing) and MBTiles (tile pyramid for web/mobile use). GeoTIFF mode: specify a center point, GSD, and dimensions; the plugin computes the map extent, renders at the requested resolution, and writes a geotagged TIFF. MBTiles mode: define an area (center+radius or bounding box), choose zoom levels or a single-shot export, and optionally expand the tile range with neighbour padding. Features include: 30+ CRS support, auto-detect minimum visible zoom, live tile count and size estimates, determinate progress bars with percentage, and support for satellite imagery, XYZ tiles, raster, and vector tile layers. Ideal for offline maps, simulation, training data, and custom analysis workflows.
 
 tracker=https://github.com/ashroo/custom_map_downloader/issues
 repository=https://github.com/ashroo/custom_map_downloader
@@ -20,11 +20,13 @@ repository=https://github.com/ashroo/custom_map_downloader
 
 hasProcessingProvider=no
 changelog=
-    0.1.2 - Added CRS selection with 30+ EPSG codes; Fixed extent calculation for geographic vs projected CRS
-    0.1.1 - Initial release with georeferencing support
+    0.2.0 - Major update: Added MBTiles export with neighbour padding (0–5 rings), auto-detect minimum visible zoom, live tile count + size estimate UI, determinate progress bars with % for both GeoTIFF and MBTiles, improved QEventLoop rendering, and expanded metadata description.
+    0.1.3 - Added MBTiles export with configurable extent (center+radius or bounding box), zoom range, single-shot mode; dynamic format-switching UI.
+    0.1.2 - Added CRS selection with 30+ EPSG codes; Fixed extent calculation for geographic vs projected CRS.
+    0.1.1 - Initial release with georeferencing support.
 
 # Tags are comma separated with spaces allowed
-tags=raster,export,geotiff,satellite,imagery,download,georeferencing,map
+tags=raster,export,geotiff,mbtiles,tiles,satellite,imagery,download,georeferencing,map,offline
 
 homepage=https://github.com/ashroo/custom_map_downloader
 category=Raster

@@ -59,7 +59,11 @@ $ExcludePatterns = @(
     'package_plugin.py',
     'package_plugin.ps1',
     'plugin_upload.py',
-    'ICON_UPDATE_INSTRUCTIONS.txt'
+    '*.bat',
+    '*.sh',
+    'help',
+    'scripts',
+    'test'
 )
 
 # Create temporary directory for packaging
