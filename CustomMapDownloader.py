@@ -11,7 +11,7 @@ import math
 import sqlite3
 import tempfile
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QSize, Qt, QEventLoop
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QSize, Qt
 from qgis.PyQt.QtGui import QIcon, QImage, QPainter, QColor
 from qgis.PyQt.QtWidgets import QAction, QMessageBox, QProgressDialog
 from qgis.core import (
@@ -270,10 +270,7 @@ class CustomMapDownloader:
         ms.setDestinationCrs(crs_dest)
 
         render = QgsMapRendererParallelJob(ms)
-        loop = QEventLoop()
-        render.renderingComplete.connect(loop.quit)
         render.start()
-        loop.exec_()
         render.waitForFinished()
         _prog(70, "Writing output file...")
         rendered = render.renderedImage()
